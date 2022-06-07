@@ -22,11 +22,12 @@ namespace ToDoApp.Controllers
 
         // GET: api/<TodosController>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> GetAll([FromQuery] TodoPaginationRequest todoPaginationRequest)
         {
             try
             {
-                return Ok(await this._todosService.getAllAsync());
+                return Ok(await this._todosService.getAllAsync(todoPaginationRequest));
             }
             catch (Exception ex)
             {

@@ -1,11 +1,12 @@
 ﻿using ToDoApp.Models.Payloads.Requests;
 using ToDoApp.Models.Payloads.Responses;
+using ToDoApp.Pagination;
 
 namespace ToDoApp.Services.Interfaces
 {
     public interface ITodosService
     {
-        public Task<Response<IEnumerable<TodoResponse>>> getAllAsync();
+        public Task<Response<PaginatedList<TodoResponse>>> getAllAsync(TodoPaginationRequest todoPaginationRequest);
 
         public Task<Response<TodoResponse>> getByIdAsync(String id);
 

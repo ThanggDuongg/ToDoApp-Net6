@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Text;
+using ToDoApp.Enums;
 using ToDoApp.Models.Entities;
 using ToDoApp.Models.Payloads.Requests;
 using ToDoApp.Models.Payloads.Responses;
+using ToDoApp.Pagination;
 using ToDoApp.Repositories.Interfaces;
 using ToDoApp.Services.Interfaces;
 
@@ -112,18 +114,71 @@ namespace ToDoApp.Services
             }
         }
 
-        public async Task<Response<IEnumerable<TodoResponse>>> getAllAsync()
+        public async Task<Response<PaginatedList<TodoResponse>>> getAllAsync(TodoPaginationRequest todoPaginationRequest)
         {
             try
             {
                 var todoEntities = await this._todosRepository.getAllAsync();
                 var result = this._mapper.Map<IEnumerable<TodoResponse>>(todoEntities);
 
-                return new Response<IEnumerable<TodoResponse>>()
+                if (!String.IsNullOrEmpty(todoPaginationRequest.searching))
+                {
+                    result = result.Where(t => t.Name.Contains(todoPaginationRequest.searching)
+                                           || t.Description.Contains(todoPaginationRequest.searching));
+                }
+
+                todoPaginationRequest.filter_complete = String.IsNullOrEmpty(todoPaginationRequest.filter_complete) ? "none" : todoPaginationRequest.filter_complete;
+                switch (todoPaginationRequest.filter_complete)
+                {
+                    case "complete":
+                        result = result.Where(t => t.IsCompleted == IsCompletedTodoEnum.COMPLETE);
+                        break;
+                    case "uncomplete":
+                        result = result.Where(t => t.IsCompleted == IsCompletedTodoEnum.UNCOMPLETED);
+                        break;
+                    default:
+                        //result = result.Where(t => t.IsCompleted == IsCompletedTodoEnum.COMPLETE);
+                        break;
+                }
+
+                todoPaginationRequest.filter_status = String.IsNullOrEmpty(todoPaginationRequest.filter_status) ? "none" : todoPaginationRequest.filter_status;
+                switch (todoPaginationRequest.filter_status)
+                {
+                    case "complete_late":
+                        result = result.Where(t => t.Status == StatusTodoEnum.COMPLETE_LATE);
+                        break;
+                    case "complete_early":
+                        result = result.Where(t => t.Status == StatusTodoEnum.COMPLETE_EARLY);
+                        break;
+                    default:
+                        break;
+                }
+
+                todoPaginationRequest.sortOrder = String.IsNullOrEmpty(todoPaginationRequest.sortOrder) ? "expected_asc" : todoPaginationRequest.sortOrder;
+                switch (todoPaginationRequest.sortOrder)
+                {
+                    case "created_desc":
+                        result = result.OrderByDescending(t => t.Created);
+                        break;
+                    case "created_asc":
+                        result = result.OrderBy(t => t.Created);
+                        break;
+                    case "expected_desc":
+                        result = result.OrderByDescending(t => t.ExpectedCompletionTime);
+                        break;
+                    case "expected_asc":
+                        result = result.OrderBy(t => t.Created);
+                        break;
+                    default:
+                        result = result.OrderBy(t => t.Created);
+                        break;
+                }
+
+                return new Response<PaginatedList<TodoResponse>>()
                 {
                     Success = true,
                     Message = "Get all todos successfully!",
-                    Data = result,
+                    Data = PaginatedList<TodoResponse>.ToPagedList(result.AsQueryable(), todoPaginationRequest.pageNumber, todoPaginationRequest.maxPageSize),
                 };
             }
             catch (Exception ex)
