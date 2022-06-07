@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text;
+using ToDoApp.Filters;
 using ToDoApp.Models.Payloads.Requests;
 using ToDoApp.Models.Payloads.Responses;
 using ToDoApp.Services.Interfaces;
@@ -82,6 +84,7 @@ namespace ToDoApp.Controllers
 
         // POST api/<TodosController>
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Create([FromBody] TodoCreateRequest todo)
         {
             try
@@ -110,14 +113,59 @@ namespace ToDoApp.Controllers
 
         // PUT api/<TodosController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Update(string id, [FromBody] TodoUpdateRequest todo)
         {
+            try
+            {
+                var result = await this._todosService.updateAsync(id, todo);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new Response<Exception>()
+                    {
+                        Success = false,
+                        Message = ex.Message,
+                    }
+                );
+            }
         }
 
         // DELETE api/<TodosController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
+            try
+            {
+                var result = await this._todosService.deleteAsync(id);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new Response<Exception>()
+                    {
+                        Success = false,
+                        Message = ex.Message,
+                    }
+                );
+            }
         }
     }
 }

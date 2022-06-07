@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using ToDoApp.Context;
+using ToDoApp.Filters;
 using ToDoApp.Repositories;
 using ToDoApp.Repositories.Interfaces;
 using ToDoApp.Services;
@@ -24,11 +26,19 @@ builder.Services.AddDbContext<ApplicationDBContext>(
         option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));    
 });
 
+//Filter
+builder.Services.AddScoped<ValidationFilterAttribute>();
+
 // Config Auto Mapper    
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddScoped<ITodosService, TodosService>();
 builder.Services.AddScoped<ITodosRepository, TodosRepository>();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 var app = builder.Build();
 

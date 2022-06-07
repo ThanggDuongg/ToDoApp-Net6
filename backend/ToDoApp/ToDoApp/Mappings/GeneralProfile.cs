@@ -11,6 +11,7 @@ namespace ToDoApp.Helper
         {
             this.CreateMap<TodoEntity, TodoResponse>().ReverseMap();
             this.CreateMap<TodoEntity, TodoCreateRequest>().ReverseMap();
+            this.CreateMap<TodoEntity, TodoUpdateRequest>().ReverseMap();
         }
     }
 }

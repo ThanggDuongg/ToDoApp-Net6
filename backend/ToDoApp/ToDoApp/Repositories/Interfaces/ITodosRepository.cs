@@ -13,5 +13,9 @@ namespace ToDoApp.Repositories.Interfaces
         public Task<TodoEntity> getByNameAsync(string name);
 
         public Task create(TodoEntity entity);
+
+        public Task update(TodoEntity entity);
+
+        public Task deleteAsync(TodoEntity entity);
     }
 }

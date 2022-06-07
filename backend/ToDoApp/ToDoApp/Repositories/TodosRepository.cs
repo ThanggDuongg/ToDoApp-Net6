@@ -24,6 +24,12 @@ namespace ToDoApp.Repositories
             await this._applicationDBContext.SaveChangesAsync();
         }
 
+        public async Task deleteAsync(TodoEntity entity)
+        {
+            this._applicationDBContext.Remove(entity);
+            this._applicationDBContext.SaveChanges();
+        }
+
         public async Task<IEnumerable<TodoEntity>> getAllAsync()
         {
             var result = await this._applicationDBContext.todos.OrderByDescending(t => t.Id).ToListAsync().ConfigureAwait(false);
@@ -42,6 +48,12 @@ namespace ToDoApp.Repositories
         {
             var result = await this._applicationDBContext.todos.FirstOrDefaultAsync(t => t.Name.Equals(name));
             return result;
+        }
+
+        public async Task update(TodoEntity entity)
+        {
+            this._applicationDBContext.todos.Update(entity);
+            this._applicationDBContext.SaveChanges();
         }
     }
 }

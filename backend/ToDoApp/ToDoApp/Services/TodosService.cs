@@ -24,10 +24,10 @@ namespace ToDoApp.Services
         
         public async Task<Response<bool>> createAsync(TodoCreateRequest todo)
         {
-            var actionContext = this._actionContextAccessor.ActionContext;
+            //var actionContext = this._actionContextAccessor.ActionContext;
             try
             {
-                if (!actionContext.ModelState.IsValid)
+                /*if (!actionContext.ModelState.IsValid)
                 {
                     StringBuilder sb = new StringBuilder();
                     foreach (var item in actionContext.ModelState.Values)
@@ -43,7 +43,7 @@ namespace ToDoApp.Services
                     };
                 }
                 else
-                {
+                {*/
                     //TodoEntity todoEntity = this._mapper.Map<TodoEntity>(todo);
 
                     TodoEntity todoEntity = new TodoEntity()
@@ -64,6 +64,46 @@ namespace ToDoApp.Services
                         Success = true,
                         Message = "Create new todo successfully!",
                     };
+                //}
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error: " + ex.Message);
+            }
+        }
+
+        public async Task<Response<bool>> deleteAsync(string id)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(id))
+                {
+                    return new Response<bool>()
+                    {
+                        Success = false,
+                        Message = "Id is invalid",
+                    };
+                }
+                else
+                {
+                    var result_getById = await this._todosRepository.getByIdAsync(Guid.Parse(id));
+                    if (result_getById != null)
+                    {
+                        await this._todosRepository.deleteAsync(result_getById);
+                        return new Response<bool>()
+                        {
+                            Success = true,
+                            Message = "Delete todo id: " + id + " successfully!",
+                        };
+                    }
+                    else
+                    {
+                        return new Response<bool>()
+                        {
+                            Success = false,
+                            Message = "todo id: " + id + " is not existed",
+                        };
+                    }
                 }
             }
             catch (Exception ex)
@@ -167,6 +207,76 @@ namespace ToDoApp.Services
                         Success = false,
                         Message = "Not existed Name: " + name,
                     };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error: " + ex.Message);
+            }
+        }
+
+        public async Task<Response<bool>> updateAsync(String id, TodoUpdateRequest todo)
+        {
+            //var actionContext = this._actionContextAccessor.ActionContext;
+            try
+            {
+                /*if (!actionContext.ModelState.IsValid)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var item in actionContext.ModelState.Values)
+                    {
+                        sb.Append(item);
+                        sb.Append("& ");
+                    }
+
+                    return new Response<bool>()
+                    {
+                        Success = false,
+                        Message = sb.ToString(),
+                    };
+                }*/
+                if (String.IsNullOrEmpty(id))
+                {
+                    return new Response<bool>()
+                    {
+                        Success = false,
+                        Message = "Id is invalid",
+                    };
+                }
+                else
+                {
+                    //var result_getById = await this._todosRepository.getByIdAsync(Guid.Parse(id));
+                    
+                    if (1 == 1)
+                    {
+                        // TodoEntity todoEntity = this._mapper.Map<TodoEntity>(todo);
+                        TodoEntity todoEntity = new TodoEntity()
+                        {
+                            Id = Guid.Parse(id),
+                            Name = todo.Name,
+                            Description = todo.Description,
+                            IsCompleted = todo.IsCompleted,
+                            ExpectedCompletionTime = todo.ExpectedCompletionTime,
+                            Created = todo.Created,
+                            Updated = todo.Updated,
+                            Status = todo.Status,
+                        };
+                        await this._todosRepository.update(todoEntity);
+
+                        return new Response<bool>()
+                        {
+                            Success = true,
+                            Message = "Update todo id: " + id + " successfully!",
+                        };
+                    }
+                    else
+                    {
+                        return new Response<bool>()
+                        {
+                            Success = false,
+                            Message = "Can't find todo with id: " + id,
+                        };
+                    }
                 }
             }
             catch (Exception ex)

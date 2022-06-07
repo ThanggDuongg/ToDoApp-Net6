@@ -12,5 +12,9 @@ namespace ToDoApp.Services.Interfaces
         public Task<Response<TodoResponse>> getByNameAsync(String name);
 
         public Task<Response<bool>> createAsync(TodoCreateRequest todo);
+
+        public Task<Response<bool>> updateAsync(String id, TodoUpdateRequest todo);
+
+        public Task<Response<bool>> deleteAsync(String id);
     }
 }
