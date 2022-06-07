@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "j3KpK429pG9+ZF/uXohe00tWlYsghAdYEb3xNAt1A0sRWjTxxq3hHgO4lDWNEZK0zBExQJonoeN5veiHB7jDqw==",
+  "dgSpecHash": "OiJqzBwpcNPPUJj6Hheuyi04jwzNA6GgEY1ap509iBlT5txv6746c2D2tvjLlYtTXIgVq8fu1m2t7VP1sB6iGw==",
   "success": true,
   "projectFilePath": "F:\\Projects\\FULLSTACK_DotnetCore\\ToDoApp\\backend\\ToDoApp\\ToDoApp\\ToDoApp.csproj",
   "expectedPackageFiles": [
@@ -43,6 +43,7 @@
     "C:\\Users\\duong\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
     "C:\\Users\\duong\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\duong\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\duong\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\duong\\.nuget\\packages\\swashbuckle.aspnetcore\\6.2.3\\swashbuckle.aspnetcore.6.2.3.nupkg.sha512",
     "C:\\Users\\duong\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.2.3\\swashbuckle.aspnetcore.swagger.6.2.3.nupkg.sha512",
     "C:\\Users\\duong\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.2.3\\swashbuckle.aspnetcore.swaggergen.6.2.3.nupkg.sha512",

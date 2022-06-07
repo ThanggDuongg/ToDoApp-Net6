@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
 using System.Text;
 using ToDoApp.Enums;
 using ToDoApp.Models.Entities;
@@ -17,11 +18,13 @@ namespace ToDoApp.Services
         private readonly ITodosRepository _todosRepository;
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TodosService(ITodosRepository todosRepository, IMapper mapper, IActionContextAccessor actionContextAccessor) {
+        public TodosService(ITodosRepository todosRepository, IMapper mapper, IActionContextAccessor actionContextAccessor, IHttpContextAccessor httpContextAccessor) {
             this._todosRepository = todosRepository ?? throw new ArgumentNullException(nameof(todosRepository));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             this._actionContextAccessor = actionContextAccessor ?? throw new ArgumentNullException(nameof(actionContextAccessor));
+            this._httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
         
         public async Task<Response<bool>> createAsync(TodoCreateRequest todo)
@@ -174,11 +177,25 @@ namespace ToDoApp.Services
                         break;
                 }
 
+                var result_handle = PaginatedList<TodoResponse>.ToPagedList(result.AsQueryable(), todoPaginationRequest.pageNumber, todoPaginationRequest.maxPageSize);
+
+                var metadata = new
+                {
+                    result_handle.TotalCount,
+                    result_handle.PageSize,
+                    result_handle.CurrentPage,
+                    result_handle.TotalPages,
+                    result_handle.HasNext,
+                    result_handle.HasPrevious,
+                };
+
+                this._httpContextAccessor.HttpContext.Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
                 return new Response<PaginatedList<TodoResponse>>()
                 {
                     Success = true,
                     Message = "Get all todos successfully!",
-                    Data = PaginatedList<TodoResponse>.ToPagedList(result.AsQueryable(), todoPaginationRequest.pageNumber, todoPaginationRequest.maxPageSize),
+                    Data = result_handle,
                 };
             }
             catch (Exception ex)
